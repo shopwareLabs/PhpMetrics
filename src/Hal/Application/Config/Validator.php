@@ -88,6 +88,11 @@ final class Validator implements ValidatorInterface
         }
         $config->set('composer', filter_var($config->get('composer'), FILTER_VALIDATE_BOOLEAN));
 
+        if (!$config->has('package-depth')) {
+            $config->set('package-depth', 0);
+        }
+        $config->set('package-depth', filter_var($config->get('package-depth'), FILTER_VALIDATE_INT));
+
         // Search
         if (!$config->has('searches')) {
             $config->set('searches', []);

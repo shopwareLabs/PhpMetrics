@@ -94,7 +94,7 @@ final class DependencyInjectionProcessor
                 return $app;
             }
 
-            $packageNameExtractor = new PackageNameExtractor(3);
+            $packageNameExtractor = new PackageNameExtractor($config->get('package-depth'));
 
             $metrics = new Metrics();
             $traverser = new NodeTraverser();
