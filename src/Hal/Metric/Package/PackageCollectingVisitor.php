@@ -22,8 +22,8 @@ final class PackageCollectingVisitor extends NodeVisitorAbstract
     private string $namespace = '';
 
     public function __construct(
-        private readonly Metrics $metrics,
-        private readonly PackageNameExtractor $nameExtractor,
+        private readonly Metrics      $metrics,
+        private readonly PackageSieve $packageSieve,
     ) {
     }
 
@@ -54,7 +54,11 @@ final class PackageCollectingVisitor extends NodeVisitorAbstract
             return null;
         }
 
-        $package = $this->nameExtractor->getPackageFromNamespace($this->namespace);
+        if ($this->packageSieve->excludePackage($this->namespace . '\\')) {
+            return null;
+        }
+
+        $package = $this->packageSieve->getPackageFromNamespace($this->namespace);
 
         $docBlockText = (string)$node->getDocComment()?->getText();
         if (1 === preg_match('/^\s*\*\s*@package\s+(.*)/m', $docBlockText, $matches)) {

@@ -39,7 +39,7 @@ use Hal\Metric\Package\PackageCollectingVisitor;
 use Hal\Metric\Package\PackageDependencies;
 use Hal\Metric\Package\PackageDistance;
 use Hal\Metric\Package\PackageInstability;
-use Hal\Metric\Package\PackageNameExtractor;
+use Hal\Metric\Package\PackageSieve;
 use Hal\Metric\Searches\Searches;
 use Hal\Metric\System\Coupling\Coupling;
 use Hal\Metric\System\Coupling\DepthOfInheritanceTree;
@@ -94,7 +94,7 @@ final class DependencyInjectionProcessor
                 return $app;
             }
 
-            $packageNameExtractor = new PackageNameExtractor($config->get('package-depth'));
+            $packageSieve = new PackageSieve($config->get('package-depth'));
 
             $metrics = new Metrics();
             $traverser = new NodeTraverser();
@@ -118,7 +118,7 @@ final class DependencyInjectionProcessor
             $traverser->addVisitor(new MaintainabilityIndexVisitor($metrics));
             $traverser->addVisitor(new KanDefectVisitor($metrics, new SimpleNodeIterator()));
             $traverser->addVisitor(new SystemComplexityVisitor($metrics, new SimpleNodeIterator()));
-            $traverser->addVisitor(new PackageCollectingVisitor($metrics, $packageNameExtractor));
+            $traverser->addVisitor(new PackageCollectingVisitor($metrics, $packageSieve));
 
             /**
              * @var array{
@@ -153,7 +153,7 @@ final class DependencyInjectionProcessor
                             new Coupling($metrics),
                             new DepthOfInheritanceTree($metrics),
                             // Package analyses
-                            new PackageDependencies($metrics, $packageNameExtractor),
+                            new PackageDependencies($metrics, $packageSieve),
                             new PackageAbstraction($metrics),
                             new PackageInstability($metrics),
                             new PackageDistance($metrics),
