@@ -39,6 +39,7 @@ use Hal\Metric\Package\PackageCollectingVisitor;
 use Hal\Metric\Package\PackageDependencies;
 use Hal\Metric\Package\PackageDistance;
 use Hal\Metric\Package\PackageInstability;
+use Hal\Metric\Package\PackageNameExtractor;
 use Hal\Metric\Searches\Searches;
 use Hal\Metric\System\Coupling\Coupling;
 use Hal\Metric\System\Coupling\DepthOfInheritanceTree;
@@ -93,6 +94,8 @@ final class DependencyInjectionProcessor
                 return $app;
             }
 
+            $packageNameExtractor = new PackageNameExtractor(3);
+
             $metrics = new Metrics();
             $traverser = new NodeTraverser();
             // TODO: Maybe use PHP Attributes to leaveNode/enterNode methods on visitor to restrict the execution by
@@ -115,7 +118,7 @@ final class DependencyInjectionProcessor
             $traverser->addVisitor(new MaintainabilityIndexVisitor($metrics));
             $traverser->addVisitor(new KanDefectVisitor($metrics, new SimpleNodeIterator()));
             $traverser->addVisitor(new SystemComplexityVisitor($metrics, new SimpleNodeIterator()));
-            $traverser->addVisitor(new PackageCollectingVisitor($metrics));
+            $traverser->addVisitor(new PackageCollectingVisitor($metrics, $packageNameExtractor));
 
             /**
              * @var array{
@@ -150,7 +153,7 @@ final class DependencyInjectionProcessor
                             new Coupling($metrics),
                             new DepthOfInheritanceTree($metrics),
                             // Package analyses
-                            new PackageDependencies($metrics),
+                            new PackageDependencies($metrics, $packageNameExtractor),
                             new PackageAbstraction($metrics),
                             new PackageInstability($metrics),
                             new PackageDistance($metrics),

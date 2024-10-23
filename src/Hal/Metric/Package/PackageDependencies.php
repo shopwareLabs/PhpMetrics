@@ -10,8 +10,6 @@ use Hal\Metric\Metrics;
 use Hal\Metric\PackageMetric;
 use function array_map;
 use function in_array;
-use function strrev;
-use function strstr;
 
 /**
  * This class registers the dependencies at package level, instead of class level.
@@ -24,7 +22,10 @@ use function strstr;
  */
 final class PackageDependencies implements CalculableInterface
 {
-    public function __construct(private readonly Metrics $metrics)
+    public function __construct(
+        private readonly Metrics $metrics,
+        private readonly PackageNameExtractor $nameExtractor,
+    )
     {
     }
 
@@ -84,8 +85,6 @@ final class PackageDependencies implements CalculableInterface
             return $packageName;
         }
 
-        // Proceed the string in reverse to try to infer the package name.
-        $revPackageName = strstr(strrev($className), '\\');
-        return false !== $revPackageName ? strrev($revPackageName) : '\\';
+        return $this->nameExtractor->getPackageFromClassName($className);
     }
 }

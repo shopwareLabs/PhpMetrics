@@ -22,7 +22,8 @@ final class PackageCollectingVisitor extends NodeVisitorAbstract
     private string $namespace = '';
 
     public function __construct(
-        private readonly Metrics $metrics
+        private readonly Metrics $metrics,
+        private readonly PackageNameExtractor $nameExtractor,
     ) {
     }
 
@@ -53,7 +54,7 @@ final class PackageCollectingVisitor extends NodeVisitorAbstract
             return null;
         }
 
-        $package = $this->namespace;
+        $package = $this->nameExtractor->getPackageFromNamespace($this->namespace);
 
         $docBlockText = (string)$node->getDocComment()?->getText();
         if (1 === preg_match('/^\s*\*\s*@package\s+(.*)/m', $docBlockText, $matches)) {
