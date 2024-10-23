@@ -6,16 +6,7 @@ class PackageSieve
 {
     public function __construct(
         private readonly int $packageLevelLimit = 0,
-        private readonly array $ignorePrefixes = [ // todo: move to config
-            'Shopware\\Core\\Migration\\V6_3\\',
-            'Shopware\\Core\\Migration\\V6_4\\',
-            'Shopware\\Core\\Migration\\V6_5\\',
-            'Shopware\\Core\\Migration\\V6_6\\',
-            'Shopware\\Core\\Migration\\V6_7\\',
-            'Shopware\\Core\\Framework\\DataAbstractionLayer\\',
-            'Symfony\\',
-            'Doctrine\\',
-        ]
+        private readonly array $ignorePrefixes = [],
     )
     {
     }

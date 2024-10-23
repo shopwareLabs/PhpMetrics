@@ -44,6 +44,7 @@ abstract class AbstractConfigFileReader implements ConfigFileReaderInterface
             'excludes' => [],
             'report' => [],
             'package-depth' => 0,
+            'package-exclude' => [],
         ];
         /**
          * @var array{
@@ -53,7 +54,8 @@ abstract class AbstractConfigFileReader implements ConfigFileReaderInterface
          *     composer: bool,
          *     searches: array<string, array<string, mixed>>,
          *     excludes: array<string>,
-         *     report: array<string, string>
+         *     report: array<string, string>,
+         *     package-exclude: array<string>
          * } $parsingConfiguration
          */
         $parsingConfiguration = $data + $defaultConfiguration;
@@ -64,6 +66,7 @@ abstract class AbstractConfigFileReader implements ConfigFileReaderInterface
             'extensions' => implode(',', $parsingConfiguration['extensions']),
             'composer' => $parsingConfiguration['composer'],
             'package-depth' => $parsingConfiguration['package-depth'],
+            'package-exclude' => $parsingConfiguration['package-exclude'],
             'searches' => Search::buildListFromArray($parsingConfiguration['searches']),
             'exclude' => implode(',', $parsingConfiguration['excludes']),
             ...array_merge(

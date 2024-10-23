@@ -94,7 +94,7 @@ final class DependencyInjectionProcessor
                 return $app;
             }
 
-            $packageSieve = new PackageSieve($config->get('package-depth'));
+            $packageSieve = new PackageSieve($config->get('package-depth'), $config->get('package-exclude'));
 
             $metrics = new Metrics();
             $traverser = new NodeTraverser();

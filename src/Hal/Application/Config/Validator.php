@@ -88,10 +88,16 @@ final class Validator implements ValidatorInterface
         }
         $config->set('composer', filter_var($config->get('composer'), FILTER_VALIDATE_BOOLEAN));
 
+        // Packages
         if (!$config->has('package-depth')) {
             $config->set('package-depth', 0);
         }
         $config->set('package-depth', filter_var($config->get('package-depth'), FILTER_VALIDATE_INT));
+
+        if (!$config->has('package-exclude')) {
+            $config->set('package-exclude', []);
+        }
+        $config->set('package-exclude', array_filter($config->get('package-exclude')));
 
         // Search
         if (!$config->has('searches')) {
