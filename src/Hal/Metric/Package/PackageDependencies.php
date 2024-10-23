@@ -10,8 +10,6 @@ use Hal\Metric\Metrics;
 use Hal\Metric\PackageMetric;
 use function array_map;
 use function in_array;
-use function strrev;
-use function strstr;
 
 /**
  * This class registers the dependencies at package level, instead of class level.
@@ -24,7 +22,10 @@ use function strstr;
  */
 final class PackageDependencies implements CalculableInterface
 {
-    public function __construct(private readonly Metrics $metrics)
+    public function __construct(
+        private readonly Metrics      $metrics,
+        private readonly PackageSieve $packageSieve,
+    )
     {
     }
 
@@ -46,6 +47,9 @@ final class PackageDependencies implements CalculableInterface
      */
     private function increaseDependencies(ClassMetric|InterfaceMetric $class): void
     {
+        if ($this->packageSieve->excludePackage($class->getName())) {
+            return;
+        }
         /** @var string $packageName */
         $packageName = $class->get('package');
         /** @var PackageMetric $incomingPackage */
@@ -55,6 +59,10 @@ final class PackageDependencies implements CalculableInterface
         foreach ($externalDependencies as $outgoingClassName) {
             // Ignore dependencies that belong to the same current analyzed package.
             if (in_array($outgoingClassName, $incomingPackage->getClasses(), true)) {
+                continue;
+            }
+
+            if ($this->packageSieve->excludePackage($outgoingClassName)) {
                 continue;
             }
 
@@ -84,8 +92,6 @@ final class PackageDependencies implements CalculableInterface
             return $packageName;
         }
 
-        // Proceed the string in reverse to try to infer the package name.
-        $revPackageName = strstr(strrev($className), '\\');
-        return false !== $revPackageName ? strrev($revPackageName) : '\\';
+        return $this->packageSieve->getPackageFromClassName($className);
     }
 }
